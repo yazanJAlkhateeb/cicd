@@ -1,0 +1,43 @@
+# Default values for core.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+replicaCount: 1
+
+image:
+  repo:         ""
+  tag:          ""
+  pullPolicy:   "Always"
+  javaOpts:     "-Xmx4500m"
+  imageName:    "pluto/psysjo-core17"
+
+sshd:
+  sshd_password: 'P@ssw0rdPluto'
+
+service:
+  app:
+    type: ClusterIP
+    port: 7070
+  sshd:
+    type: ClusterIP
+    port: 22
+
+istio:
+  enabled: true
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 3000m
+    memory: 5000Mi
+  requests:
+    cpu: 100m
+    memory: 1024Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

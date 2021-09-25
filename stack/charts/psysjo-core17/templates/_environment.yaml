@@ -1,0 +1,108 @@
+{{- define "environment" }}
+#-------------------------------------------------------------------------------
+# defaults
+#-------------------------------------------------------------------------------
+{{- $engine   := .Values.global.database_engine }}
+{{- $username := .Values.global.database_username }}
+{{- $password := .Values.global.database_password }}
+#-------------------------------------------------------------------------------
+# Common Variables
+#-------------------------------------------------------------------------------
+- name: "db_user"
+  value: "{{ $username }}"
+- name: "db_password"
+  value: "{{ $password }}"
+- name: "db_schema"
+  value: "{{ $username }}"
+- name: "db_engine"
+  value: "{{ $engine }}"
+- name: "db_external"
+  value: "{{ .Values.global.database_external | default false }}"
+- name: "env_broker_url"
+  value: "tcp://{{ .Release.Name }}-artemis:61616"
+
+#-------------------------------------------------------------------------------
+# Oracle Varables
+#-------------------------------------------------------------------------------
+{{- if eq $engine "oracle" }}
+{{- $instance :=  .Values.global.database_instance | default "xe" }}
+{{- $port     :=  .Values.global.database_port     | default 1521 }}
+{{- $host     :=  .Values.global.database_host     | default (printf "%s-oracle" .Release.Name) }}
+- name: "db_host"
+  value: "{{ $host }}"
+- name: "db_port"
+  value: "{{ $port }}"
+- name: "db_instance"
+  value: "{{ $instance }}"
+- name: "db_url"
+  value: "jdbc:oracle:thin:@{{ $host }}:{{ $port }}/{{ $instance }}"
+- name: "db_type"
+  value: "ORACLE10"
+- name: "db_driver"
+  value: "oracle.jdbc.OracleDriver"
+- name: "db_dialect"
+  value: "org.hibernate.dialect.Oracle10gDialect"
+- name: "db_validation_query"
+  value: "SELECT 1 FROM DUAL"
+- name: "db_check_query"
+  value: "SELECT COUNT(*) FROM USER_TABLES"
+#-------------------------------------------------------------------------------
+# MSSQL Varables
+#-------------------------------------------------------------------------------
+{{- else if eq $engine "mssql" }}
+{{- $instance :=  .Values.global.database_instance | default "" }}
+{{- $port     :=  .Values.global.database_port     | default 1433 }}
+{{- $host     :=  .Values.global.database_host     | default (printf "%s-mssql" .Release.Name) }}
+- name: "db_host"
+  value: "{{ $host }}"
+- name: "db_port"
+  value: "{{ $port }}"
+- name: "db_instance"
+  value: "{{ $instance }}"
+- name: "db_url"
+  value: "jdbc:jtds:sqlserver://{{ $host }}:{{ $port }}/{{ $username }}"
+- name: "db_type"
+  value: "MSSQL2008"
+- name: "db_driver"
+  value: "net.sourceforge.jtds.jdbc.Driver"
+- name: "db_dialect"
+  value: "org.hibernate.dialect.SQLServer2008Dialect"
+- name: "db_validation_query"
+  value: "SELECT 1"
+- name: "db_check_query"
+  value: "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES"
+#-------------------------------------------------------------------------------
+# Default H2
+#-------------------------------------------------------------------------------
+{{- else }}
+{{- $instance := "" }}
+{{- $host     := "" }}
+{{- $port     := "" }}
+- name: "db_host"
+  value: "{{ $host }}"
+- name: "db_port"
+  value: "{{ $port }}"
+- name: "db_instance"
+  value: "{{ $instance }}"
+- name: "db_url"
+  value: "jdbc:h2:file:/init/data/h2db;MODE=Oracle;AUTO_SERVER=TRUE;MVCC=true;LOCK_TIMEOUT=5000"
+- name: "db_type"
+  value: "H2"
+- name: "db_driver"
+  value: "org.h2.Driver"
+- name: "db_dialect"
+  value: "org.hibernate.dialect.H2Dialect"
+- name: "db_validation_query"
+  value: "SELECT 1 FROM DUAL"
+- name: "db_check_query"
+  value: "SELECT 1 FROM DUAL"
+{{- end }}
+#-------------------------------------------------------------------------------
+# Environment Variables
+#-------------------------------------------------------------------------------
+{{- if .Values.javaOpts }}
+- name: "JAVA_OPTS"
+  value: "{{ .Values.javaOpts }}"
+{{- end }}
+#-------------------------------------------------------------------------------
+{{- end }}

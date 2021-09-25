@@ -1,0 +1,7 @@
+database_username= {{ .Values.global.database_username }}
+database_password= {{ .Values.global.database_password }}
+url= https://{{ .Release.Name }}-{{ include "psysjo-core17.shortname" . }}.{{ .Values.global.psci_devops_domain }}
+
+Realease_name= {{ .Release.Name }}
+shortname= {{ include "psysjo-core17.shortname" . }}
+domain = { .Values.global.psci_devops_domain }}

@@ -1,0 +1,5 @@
+dependencies:
+  - name: psysjo-core17
+    version: 0.1.0
+  - name: artemis
+    version: 0.1.0

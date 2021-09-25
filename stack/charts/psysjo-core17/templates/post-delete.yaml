@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{.Release.Name}}-post-delete"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    helm.sh/chart: {{ include "psysjo-core17.chart" . }}
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{.Release.Name}}-post-delete"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote}}
+        helm.sh/chart: {{ include "psysjo-core17.chart" . }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: post-delete-job
+          image: "progressoft/dbtool:latest"
+          command: [ "bash", "-c", "dbtool  $db_engine \
+                                    --user  $db_user \
+                                    --pass  $db_password \
+                                    --host  $db_host \
+                                    --port  $db_port \
+                                    --inst  $db_instance \
+                                    --external $db_external \
+                                    --drop  true \
+                                    --max 3
+                                    " ]
+          env:
+            {{- include "environment" . | indent 12 }}

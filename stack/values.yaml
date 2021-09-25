@@ -1,0 +1,22 @@
+# This is the global configuration file for your stack
+
+global:
+  # PSCI Variables
+  #
+  psci_devops_domain:   "${PSCI_DEVOPS_DOMAIN}"
+
+  # Database settings
+  #
+  database_external:    "false"
+  database_engine:      "oracle"
+  database_username:    "${PSCI_DBUSER_NAME}"
+  database_password:    "${PSCI_DBUSER_NAME}"
+  database_instance:    "EE.oracle.docker"
+  database_host:        "pluto-oracle-db"
+  database_port:        "1521"
+
+psysjo-core17:
+  image:
+    tag: "${PSCI_VERSION}"
+    repo: "${PSCI_REGISTRY_URL}"
+

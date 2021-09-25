@@ -1,0 +1,22 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: "{{ .Release.Name }}-{{ include "psysjo-core17.shortname" . }}"
+  labels:
+{{ include "psysjo-core17.labels" . | indent 4 }}
+spec:
+  gateways:
+  - global-gateway.istio-system.svc.cluster.local
+  hosts:
+  - "{{ .Release.Name }}-{{ include "psysjo-core17.shortname" . }}.{{ .Values.global.psci_devops_domain }}"
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: "{{ .Release.Name }}-{{ include "psysjo-core17.shortname" . }}"
+        port:
+          number: {{ .Values.service.app.port }}
+{{- end }}
