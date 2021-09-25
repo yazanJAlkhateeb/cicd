@@ -13,16 +13,13 @@ image:
   javaOpts:     "-Xmx4500m"
   imageName:    "pluto/psysjo-core17"
 
-sshd:
-  sshd_password: 'P@ssw0rdPluto'
+
 
 service:
   app:
     type: ClusterIP
     port: 7070
-  sshd:
-    type: ClusterIP
-    port: 22
+
 
 istio:
   enabled: true

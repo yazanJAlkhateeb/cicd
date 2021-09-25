@@ -14,21 +14,3 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "psysjo-core17.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: "sshd-{{ include "psysjo-core17.fullname" . }}"
-  labels:
-{{ include "psysjo-core17.labels" . | indent 4 }}
-spec:
-  type: {{ .Values.service.sshd.type }}
-  ports:
-    - port: {{ .Values.service.sshd.port }}
-      targetPort: http-sshd
-      protocol: TCP
-      name: http-sshd
-  selector:
-    app.kubernetes.io/name: {{ include "psysjo-core17.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
